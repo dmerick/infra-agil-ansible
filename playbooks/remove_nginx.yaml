@@ -1,0 +1,18 @@
+- name: Playbook para remover nginx
+  hosts: all
+  tasks:
+  - name: Removendo nginx Ubuntu
+    become: yes
+    apt:
+      name: nginx
+      state: absent
+    when: ansible_distribution == "Ubuntu"
+  - name: Removendo nginx Generico
+    become: yes
+    package: 
+      name: nginx
+      state: absent
+  - name: Parando nginx
+    service: 
+      name: nginx
+      state: stopped  

@@ -1,0 +1,38 @@
+- name: Playbook para instalar apache
+  hosts: all
+  tasks: 
+  - name: Instalando apache no Ubuntu
+    become: yes
+    apt:
+      name: "{{ item }}"
+      state: present
+    with_items:
+    - "apache2"
+    - "libapache2-mod-php7.0" 
+    when: ansible_distribution == "Ubuntu"
+  - name: Instalando httpd no CentOS
+    become: yes
+    yum: 
+      name: "{{ item }}"
+      state: present
+    with_items:
+    - "httpd"
+    - "php"
+    when: ansible_distribution == "CentOS"
+  - name: Copiando index.php
+    become: yes
+    copy:
+      src:  /etc/ansible/index.php
+      dest: /var/www/html/index.php
+  handlers:
+  - name: httpd
+    service:
+      name: httpd
+      state: restarted
+    when: ansible_distribution == "CentOS"
+  - name: apache2
+    service:
+      name: apache2
+      state: started
+    when: ansible_distribution == "Ubuntu"
+
